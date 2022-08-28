@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         std::cout << "Invalid arguments.";
         return 1;
     }
-    bool cosine = false;
+    bool cosine {false};
     if (argc == 4 && argv[3][0] == 'c')
     {
         cosine = true;
