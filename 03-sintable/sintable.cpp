@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         std::cout << "Invalid arguments.";
         return 1;
     }
-    bool cosine {false};
+    bool cosine{false};
     if (argc == 4 && argv[3][0] == 'c')
     {
         cosine = true;
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
         if (cosine)
         {
             current_value = cos(current_degree) * max_value;
-            std::cout <<'\t' << current_value;
+            std::cout << '\t' << current_value;
         }
         std::cout << '\n';
     }
