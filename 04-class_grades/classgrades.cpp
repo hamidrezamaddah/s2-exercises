@@ -8,8 +8,13 @@
 #include <utility>
 #include <vector>
 
-using grade_t = std::pair<std::string, double>;
-using grades_t = std::vector<grade_t>;
+struct student_t
+{
+  std::string name;
+  double grade;
+};
+
+using students_t = std::vector<student_t>;
 
 void display_operations()
 {
@@ -27,7 +32,7 @@ void display_operations()
 select command>";
 }
 
-std::optional<grades_t> analize_file(const std::string &path)
+std::optional<students_t> analize_file(const std::string &path)
 {
   std::ifstream grade_file;
   std::string line;
@@ -36,7 +41,7 @@ std::optional<grades_t> analize_file(const std::string &path)
   {
     return std::nullopt;
   }
-  grades_t grades;
+  students_t students;
   while (std::getline(grade_file, line))
   {
     std::istringstream iss(line);
@@ -48,56 +53,56 @@ std::optional<grades_t> analize_file(const std::string &path)
     {
       continue;
     }
-    grades.push_back({name, grade});
+    students.push_back({name, grade});
   }
-  return grades;
+  return students;
 }
 
-void display_all_grades(const grades_t &grades)
+void display_all_grades(const students_t &students)
 {
   std::cout << "Class Grades:\n";
-  for (auto &grade : grades)
+  for (auto &student : students)
   {
-    std::cout << grade.second << '\t' << grade.first << '\n';
+    std::cout << student.grade << '\t' << student.name << '\n';
   }
 }
 
-void display_best_grade(const grades_t &grades)
+void display_best_grade(const students_t &students)
 {
-  auto best = std::max_element(grades.begin(), grades.end(), [](const grade_t &l, const grade_t &r)
-                               { return l.second < r.second; });
-  std::cout << "The Best Grade is " << best->second << " from " << best->first
+  auto best = std::max_element(students.begin(), students.end(), [](const student_t &l, const student_t &r)
+                               { return l.grade < r.grade; });
+  std::cout << "The Best Grade is " << best->grade << " from " << best->name
             << '\n';
 }
 
-auto get_average(const grades_t &grades)
+auto get_average(const students_t &students)
 {
   auto sum{0.0};
-  for (auto &grade : grades)
+  for (auto &student : students)
   {
-    sum += grade.second;
+    sum += student.grade;
   }
-  return sum / grades.size();
+  return sum / students.size();
 }
 
-void display_average(const grades_t &grades)
+void display_average(const students_t &students)
 {
-  std::cout << "Class average grade is " << get_average(grades) << '\n';
+  std::cout << "Class average grade is " << get_average(students) << '\n';
 }
 
-void display_failed_grades(const grades_t &grades)
+void display_failed_grades(const students_t &students)
 {
   std::cout << "Failed Students:\n";
-  for (auto &grade : grades)
+  for (auto &student : students)
   {
-    if (grade.second < 10)
+    if (student.grade < 10)
     {
-      std::cout << grade.second << '\t' << grade.first << '\n';
+      std::cout << student.grade << '\t' << student.name << '\n';
     }
   }
 }
 
-void run_commands(const grades_t &grades)
+void run_commands(const students_t &students)
 {
   while (true)
   {
@@ -107,16 +112,16 @@ void run_commands(const grades_t &grades)
     switch (cmd)
     {
     case 1:
-      display_all_grades(grades);
+      display_all_grades(students);
       break;
     case 2:
-      display_best_grade(grades);
+      display_best_grade(students);
       break;
     case 3:
-      display_average(grades);
+      display_average(students);
       break;
     case 4:
-      display_failed_grades(grades);
+      display_failed_grades(students);
       break;
     case 0:
       return;
@@ -136,12 +141,12 @@ int main(int argc, char **argv)
     std::cout << "File is not exist!\n";
     return 1;
   }
-  auto &grades = result.value();
-  if (grades.size() == 0)
+  auto &students = result.value();
+  if (students.size() == 0)
   {
     std::cout << "File is empty!\n";
     return 0;
   }
-  run_commands(grades);
+  run_commands(students);
   return 0;
 }
