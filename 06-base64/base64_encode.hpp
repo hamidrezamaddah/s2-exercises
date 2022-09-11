@@ -10,7 +10,7 @@ class base64_encode_t
 {
 private:
     std::array<char, 64> base64_alphabet;
-    std::vector<uint8_t> input_data;
+    std::vector<uint8_t>* input_data;
     static constexpr unsigned int base64_char_num_bit = 6;
 
     constexpr void fill_base64_alphabet_table()
@@ -36,10 +36,10 @@ private:
         data |= (1 << bit);
     }
 
-    void cbi(uint8_t& data, unsigned int bit)
+    void cbi(uint8_t &data, unsigned int bit)
     {
         data &= ~(1 << bit);
-    } 
+    }
 
     bool get_bit(uint8_t *data, unsigned int bitoffset)
     {
@@ -61,7 +61,7 @@ private:
 
     unsigned int num_pads()
     {
-        unsigned int num_bytes = input_data.size();
+        unsigned int num_bytes = input_data->size();
         for (unsigned int i = num_bytes, j = 0;; i++, j++)
         {
             if (((i * 8) % base64_char_num_bit) == 0)
@@ -73,25 +73,14 @@ private:
     }
 
 public:
-    base64_encode_t()
+    base64_encode_t() : input_data{nullptr}
     {
         fill_base64_alphabet_table();
     }
 
-    void add(uint8_t *data, unsigned int len)
+    void set_data(std::vector<uint8_t>* data)
     {
-        for (unsigned int i = 0; i < len; i++)
-        {
-            input_data.push_back(data[i]);
-        }
-    }
-
-    void add(std::string str)
-    {
-        for (unsigned int i = 0; i < str.length(); i++)
-        {
-            input_data.push_back(str[i]);
-        }
+        input_data = data;
     }
 
     unsigned int round_up_div(unsigned int num, unsigned int div_to)
@@ -102,10 +91,14 @@ public:
     std::string convert()
     {
         std::string encoded;
-        unsigned int num_encoded_char = round_up_div(input_data.size() * 8 , base64_char_num_bit);
+        if(input_data == nullptr)
+        {
+            return "";
+        }
+        unsigned int num_encoded_char = round_up_div(input_data->size() * 8, base64_char_num_bit);
         for (int i = 0; i < num_encoded_char; i++)
         {
-            uint8_t temp = get_char(input_data.data(), i * base64_char_num_bit);
+            uint8_t temp = get_char(input_data->data(), i * base64_char_num_bit);
             encoded += base64_alphabet[temp];
         }
         for (unsigned int i = 0; i < num_pads(); i++)
