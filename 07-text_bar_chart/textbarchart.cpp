@@ -12,10 +12,10 @@ std::vector<int> find_max(std::vector<int> input_data, std::vector<int> ignore_v
         {
             return false;
         }
-        if (std::find(ignore_values.begin(), ignore_values.end(), l) != ignore_values.end())
-        {
-            return true;
-        }
+        // if (std::find(ignore_values.begin(), ignore_values.end(), l) != ignore_values.end())
+        // {
+        //     return true;
+        // }
         return (l < r);
     };
 
