@@ -46,7 +46,7 @@ std::vector<int> find_negative_indexes(std::vector<int> input_data, std::vector<
     return neg_indexes;
 }
 
-void pos_part(std::vector<int> input_data)
+void draw_pos_part(std::vector<int> input_data)
 {
     std::cout << "^\n";
 
@@ -70,20 +70,14 @@ void pos_part(std::vector<int> input_data)
 
         for (int i = 0; i < input_data.size(); i++)
         {
-            if (std::find(ignore_values.begin(), ignore_values.end(), input_data[i]) != ignore_values.end() || j == 0)
-            {
-                std::cout << "#";
-            }
-            else
-            {
-                std::cout << " ";
-            }
+            char ch =  (std::find(ignore_values.begin(), ignore_values.end(), input_data[i]) != ignore_values.end() || j == 0) ? '#' : ' ';
+            std::cout << ch;
         }
         std::cout << "\n";
     }
 }
 
-void neg_part(std::vector<int> input_data)
+void draw_neg_part(std::vector<int> input_data)
 {
     int min_value = *std::min_element(input_data.begin(), input_data.end());
     if (min_value >= 0)
@@ -101,23 +95,54 @@ void neg_part(std::vector<int> input_data)
 
         for (int i = 0; i < input_data.size(); i++)
         {
-            if (std::find(ignore_values.begin(), ignore_values.end(), input_data[i]) == ignore_values.end())
-            {
-                std::cout << "#";
-            }
-            else
-            {
-                std::cout << " ";
-            }
+            char ch = (std::find(ignore_values.begin(), ignore_values.end(), input_data[i]) == ignore_values.end()) ? '#' : ' ';
+            std::cout << ch;
         }
         std::cout << "\n";
     }
     std::cout << "v\n";
 }
 
+bool is_number(std::string str)
+{
+    for (int i = 0; i < str.size(); i++)
+    {
+        if (!std::isdigit(str[i]))
+        {
+            if(i == 0 && str[i] == '-')
+            {
+                continue;
+            }
+            return false;
+        }
+    }
+    return true;
+}
+
+std::vector<int> get_input_data(int argc, char *argv[])
+{
+    std::vector<int> input_data;
+    for(int i = 1 ; i < argc; i++)
+    {
+        if(!is_number(argv[i]))
+        {
+            return std::vector<int>{};
+        }
+        input_data.push_back(std::atoi(argv[i]));
+    }
+    return input_data;
+}
+
 int main(int argc, char *argv[])
 {
-    std::vector<int> input_data{0, 3, 6, 7, 8, 7, 6, 3, 0, -3, -6, -7, -8, -7, -6, -3, 0};
-    pos_part(input_data);
-    neg_part(input_data);
+    std::vector<int> input_data = get_input_data(argc,argv);
+    if(input_data.size() == 0)
+    {
+        std::cout << "Invalid arguments!\n";
+        return -1;
+    }
+    
+    draw_pos_part(input_data);
+    draw_neg_part(input_data);
+    return 0;
 }
